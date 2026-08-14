@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>لیست کارها و ردیاب هدف</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<button id="themeToggle" class="theme-toggle" title="تغییر حالت">🌙</button>
+
+<div class="app-shell">
+
+  <div class="tab-bar">
+    <button class="tab-btn active" data-tab="tasksTab">📋 کارها</button>
+    <button class="tab-btn" data-tab="goalTab">🎯 هدف</button>
+    <button class="tab-btn" data-tab="profileTab">👤 پروفایل</button>
+    <button class="tab-btn" data-tab="helpTab">❓ راهنما</button>
+  </div>
+
+  <!-- ===================== تب کارها ===================== -->
+  <div class="tab-panel active" id="tasksTab">
+    <div class="quote-banner" id="quoteBanner"></div>
+
+    <div class="date-widget">
+      <div class="date-row"><span class="date-label">شمسی:</span> <span id="shamsiDate"></span></div>
+      <div class="date-row"><span class="date-label">میلادی:</span> <span id="gregorianDate"></span></div>
+      <div class="date-row"><span class="date-label">قمری:</span> <span id="hijriDate"></span></div>
+      <div class="date-row time-row">🕒 <span id="liveClock"></span> <small>(به وقت ایران)</small></div>
+    </div>
+
+    <div class="progress-section">
+      <div class="progress-bar-bg"><div class="progress-bar-fill" id="progressFill"></div></div>
+      <span id="progressText">0٪ تکمیل شده</span>
+    </div>
+
+    <div class="input-section">
+      <input type="text" id="taskInput" placeholder="یه کار جدید بنویس..." />
+      <button id="addBtn">➕</button>
+    </div>
+
+    <div class="options-row">
+      <div class="option-group">
+        <label>اولویت:</label>
+        <select id="prioritySelect">
+          <option value="low">کم</option>
+          <option value="medium" selected>متوسط</option>
+          <option value="high">زیاد</option>
+        </select>
+      </div>
+      <div class="option-group">
+        <label>دسته:</label>
+        <select id="categorySelect">
+          <option value="general">عمومی</option>
+          <option value="work">کاری</option>
+          <option value="study">درسی</option>
+          <option value="personal">شخصی</option>
+        </select>
+      </div>
+    </div>
+    <div class="options-row">
+      <div class="option-group">
+        <label>مهلت انجام:</label>
+        <input type="date" id="dueDateInput" />
+      </div>
+    </div>
+    <div id="dueDateConverted" class="due-converted"></div>
+
+    <div class="options-row">
+      <div class="option-group">
+        <label>📝 یادداشت:</label>
+        <input type="text" id="noteInput" placeholder="توضیح کوتاه (اختیاری)..." />
+      </div>
+    </div>
+
+    <div class="toolbar-row">
+      <input type="text" id="searchInput" placeholder="🔍 جستجو..." />
+      <select id="sortSelect">
+        <option value="newest">جدیدترین</option>
+        <option value="priority">اولویت</option>
+        <option value="due">مهلت</option>
+      </select>
+    </div>
+
+    <div class="filter-section">
+      <button class="filter-btn active" data-filter="all">همه</button>
+      <button class="filter-btn" data-filter="active">انجام‌نشده</button>
+      <button class="filter-btn" data-filter="completed">انجام‌شده</button>
+      <button class="filter-btn" data-filter="high">اولویت زیاد</button>
+    </div>
+
+    <ul id="taskList"></ul>
+
+    <div class="stats">
+      <span id="taskCount">0 کار باقی مونده</span>
+      <button id="clearCompleted">🗑 پاک انجام‌شده‌ها</button>
+    </div>
+
+    <div class="backup-row">
+      <button id="exportBtn">⬇️ خروجی پشتیبان</button>
+      <button id="importBtn">⬆️ بازیابی پشتیبان</button>
+      <input type="file" id="importFile" accept=".json" style="display:none" />
+    </div>
+  </div>
+
+  <!-- ===================== تب هدف ===================== -->
+  <div class="tab-panel" id="goalTab">
+    <div class="goal-setup">
+      <h2>🎯 هدفت رو تعریف کن</h2>
+      <div class="option-group full">
+        <label>اسم هدف:</label>
+        <input type="text" id="goalNameInput" placeholder="مثلاً: یادگیری Phaser 3" />
+      </div>
+      <div class="option-group full">
+        <label>هدف روزانه (تعداد کار):</label>
+        <input type="number" id="goalDailyTarget" min="1" max="20" value="3" />
+      </div>
+      <div class="option-group full">
+        <label>ددلاین هدف:</label>
+        <input type="date" id="goalDeadline" />
+      </div>
+      <button id="saveGoalBtn">ذخیره هدف</button>
+    </div>
+
+    <div id="todayStatusCard" class="today-status-card"></div>
+    <div id="streakCard" class="streak-card"></div>
+    <div id="goalSummary" class="goal-summary"></div>
+
+    <div class="chart-block">
+      <h3>نمودار ۷ روز اخیر</h3>
+      <div class="bar-chart" id="weeklyChart"></div>
+    </div>
+    <div class="chart-block">
+      <h3>نمودار ماهانه (۴ هفته اخیر)</h3>
+      <div class="bar-chart" id="monthlyChart"></div>
+    </div>
+    <div class="chart-block">
+      <h3>نمودار سالانه (۱۲ ماه اخیر)</h3>
+      <div class="bar-chart" id="yearlyChart"></div>
+    </div>
+
+    <div id="goalMessage" class="goal-message"></div>
+  </div>
+
+  <!-- ===================== تب پروفایل ===================== -->
+  <div class="tab-panel" id="profileTab">
+
+    <div id="authSection">
+      <h2 class="section-title">👤 ورود یا ثبت‌نام</h2>
+      <p class="hint-text">این حساب فقط رو همین مرورگر و همین سیستم ذخیره می‌شه (محلی)، نه رو یه سرور واقعی.</p>
+
+      <div class="options-row">
+        <div class="option-group full">
+          <label>نام نمایشی:</label>
+          <input type="text" id="signupName" placeholder="مثلاً: بهنود" />
+        </div>
+        <div class="option-group full">
+          <label>ایمیل (فقط برای نمایش):</label>
+          <input type="email" id="signupEmail" placeholder="you@example.com" />
+        </div>
+        <div class="option-group full">
+          <label>انتخاب آواتار:</label>
+          <div class="avatar-picker" id="avatarPicker">
+            <span class="avatar-option" data-avatar="🧑‍💻">🧑‍💻</span>
+            <span class="avatar-option" data-avatar="🦾">🦾</span>
+            <span class="avatar-option" data-avatar="🚀">🚀</span>
+            <span class="avatar-option" data-avatar="🎯">🎯</span>
+            <span class="avatar-option" data-avatar="🐺">🐺</span>
+            <span class="avatar-option" data-avatar="⚡">⚡</span>
+          </div>
+        </div>
+      </div>
+      <button id="signupBtn">ورود / ساخت پروفایل</button>
+    </div>
+
+    <div id="profileSection" style="display:none;">
+      <div class="profile-header">
+        <div class="profile-avatar" id="profileAvatar"></div>
+        <div class="profile-name" id="profileName"></div>
+        <div class="profile-email" id="profileEmail"></div>
+        <div class="profile-since" id="profileSince"></div>
+      </div>
+
+      <div class="profile-stats">
+        <div class="stat-box"><div class="stat-num" id="statTotalTasks">0</div><div class="stat-label">کار انجام‌شده</div></div>
+        <div class="stat-box"><div class="stat-num" id="statStreak">0</div><div class="stat-label">روز متوالی موفق</div></div>
+        <div class="stat-box"><div class="stat-num" id="statLongest">0</div><div class="stat-label">رکورد متوالی</div></div>
+      </div>
+
+      <button id="logoutBtn">خروج از پروفایل</button>
+    </div>
+  </div>
+
+  <!-- ===================== تب راهنما ===================== -->
+  <div class="tab-panel" id="helpTab">
+    <h2 class="section-title">❓ راهنمای کامل برنامه</h2>
+
+    <div class="help-item">
+      <h3>📋 تب کارها</h3>
+      <p>کارهای روزانه‌ت رو اینجا اضافه می‌کنی. برای هر کار می‌تونی اولویت (کم/متوسط/زیاد)، دسته‌بندی، مهلت انجام و یه یادداشت کوتاه تعیین کنی. با کلیک روی چک‌باکس، کار رو انجام‌شده علامت می‌زنی. دابل‌کلیک روی متن کار، امکان ویرایششو میده.</p>
+    </div>
+    <div class="help-item">
+      <h3>🔍 جستجو و مرتب‌سازی</h3>
+      <p>می‌تونی بین کارها جستجو کنی یا بر اساس جدیدترین، اولویت، یا مهلت انجام مرتبشون کنی.</p>
+    </div>
+    <div class="help-item">
+      <h3>🎯 تب هدف</h3>
+      <p>یه هدف کلی (مثلاً "یادگیری Phaser") با تعداد کار هدف روزانه و یه ددلاین تعریف می‌کنی. برنامه هر روز چک می‌کنه چند تا کار انجام دادی و اگه به هدف روزانه برسی، بهت پیام تشویقی می‌ده. نمودارهای هفتگی، ماهانه و سالانه هم پیشرفتتو نشون می‌دن.</p>
+    </div>
+    <div class="help-item">
+      <h3>🔥 روزهای متوالی</h3>
+      <p>اگه پشت‌سرهم روزهایی که به هدف روزانه رسیدی رو ادامه بدی، شمارنده‌ی «روز متوالی موفق» بالا می‌ره. اگه یه روز رو از دست بدی، این عدد از نو شروع می‌شه، ولی رکورد بیشترینت (بهترین زنجیره) همیشه ذخیره می‌مونه.</p>
+    </div>
+    <div class="help-item">
+      <h3>👤 تب پروفایل</h3>
+      <p>یه پروفایل محلی (فقط رو همین مرورگر) می‌سازی که آمار کلی فعالیتت رو نشون می‌ده: چند تا کار تا الان انجام دادی، چند روز متوالی موفق بودی، و رکوردت چیه.</p>
+    </div>
+    <div class="help-item">
+      <h3>💾 پشتیبان‌گیری</h3>
+      <p>با دکمه‌ی «خروجی پشتیبان» یه فایل از همه‌ی کارها و هدفت دانلود می‌کنی. اگه بعداً مرورگر عوض کردی یا اطلاعاتت پاک شد، با «بازیابی پشتیبان» همون فایل رو دوباره وارد می‌کنی.</p>
+    </div>
+    <div class="help-item">
+      <h3>🌙 حالت تاریک</h3>
+      <p>دکمه‌ی دایره‌ای بالا-چپ صفحه، بین حالت روشن و تاریک جابه‌جا می‌کنه.</p>
+    </div>
+  </div>
+
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script src="script.js"></script>
+</body>
+</html>
